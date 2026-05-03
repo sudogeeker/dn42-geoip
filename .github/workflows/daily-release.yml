@@ -1,0 +1,54 @@
+name: Daily GeoFeed Release
+
+on:
+  schedule:
+    - cron: '7 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Clone DN42 registry
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DN42_SSH_KEY }}" > ~/.ssh/dn42_key
+          chmod 600 ~/.ssh/dn42_key
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/dn42_key -o StrictHostKeyChecking=accept-new"
+          git clone --depth 1 git@git.dn42.dev:dn42/registry.git registry_repo
+
+      - name: Set release tag
+        id: tag
+        run: echo "TAG=release-$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Generate primary data
+        run: python generate_primary.py
+
+      - name: Merge with manual overrides
+        run: python merge_primary_manual.py
+
+      - name: Delete existing release (if any)
+        run: |
+          gh release delete "${{ steps.tag.outputs.TAG }}" --cleanup-tag -y || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        continue-on-error: true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.tag.outputs.TAG }}
+          tag_name: ${{ steps.tag.outputs.TAG }}
+          files: geofeed.csv
+          fail_on_unmatched_files: true

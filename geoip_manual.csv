@@ -1,0 +1,2 @@
+# prefix,country_code,region,city,postal_code
+# Add manual overrides below. Each row's prefix overrides the matching entry from geoip_primary.csv.
