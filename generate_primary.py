@@ -5,6 +5,7 @@ import os
 import sys
 import csv
 import ipaddress
+from validate import valid_cidr, valid_country
 
 REGISTRY_PATH = 'registry_repo'
 OUTPUT_PATH = 'geoip_primary.csv'
@@ -65,6 +66,12 @@ def generate():
             country = data.get('country')
 
             if not cidr or not country:
+                continue
+
+            if not valid_cidr(cidr, filepath):
+                continue
+            if not valid_country(country):
+                print(f"SKIP invalid country [{country}] from {filepath}", file=sys.stderr)
                 continue
 
             entries.append((cidr, country))

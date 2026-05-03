@@ -9,6 +9,7 @@ Output follows NextTrace 6-column format:
 import csv
 import sys
 import os
+from validate import valid_cidr, valid_country, valid_asn
 
 PRIMARY_PATH = 'geoip_primary_nt.csv'
 MANUAL_PATH = 'geoip_manual_nt.csv'
@@ -49,6 +50,18 @@ def merge_csv():
                         continue
                     prefix = row[0].strip()
                     if not prefix:
+                        continue
+                    if not valid_cidr(prefix, f'{MANUAL_PATH} manual entry'):
+                        continue
+                    country = row[1].strip() if len(row) > 1 else ''
+                    if country and not valid_country(country):
+                        print(f"SKIP invalid country [{country}] in manual entry {prefix}",
+                              file=sys.stderr)
+                        continue
+                    asn = row[4].strip() if len(row) > 4 else ''
+                    if asn and not valid_asn(asn):
+                        print(f"SKIP invalid ASN [{asn}] in manual entry {prefix}",
+                              file=sys.stderr)
                         continue
                     if prefix in seen:
                         rows = [r for r in rows if r[0].strip() != prefix]

@@ -10,6 +10,7 @@ import os
 import sys
 import csv
 import ipaddress
+from validate import valid_cidr, valid_country, valid_asn
 
 REGISTRY_PATH = 'registry_repo'
 OUTPUT_PATH = 'geoip_primary_nt.csv'
@@ -92,8 +93,17 @@ def generate():
             if not cidr or not country:
                 continue
 
+            if not valid_cidr(cidr, filepath):
+                continue
+            if not valid_country(country):
+                print(f"SKIP invalid country [{country}] from {filepath}", file=sys.stderr)
+                continue
+
             routes = route_map.get(filename, [])
             asn = ';'.join(routes) if routes else ''
+            if not valid_asn(asn):
+                print(f"SKIP invalid ASN [{asn}] from route for {cidr}", file=sys.stderr)
+                asn = ''
 
             entries.append((cidr, country, '', '', asn, mnt_by))
 
