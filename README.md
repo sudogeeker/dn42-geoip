@@ -6,10 +6,10 @@
 
 每个 Release 包含两种格式：
 
-| 文件 | 规范 | 字段 | 下游 |
-|---|---|---|---|
-| `geofeed.csv` | [RFC 8805](https://datatracker.ietf.org/doc/html/rfc8805) | `prefix, country_code, region, city, postal_code` | WHOIS `remarks: Geofeed` |
-| `geofeed_nt.csv` | NextTrace 6 列 | `IP_CDIR, LtdCode, ISO3166-2, CityName, ASN, IPWhois` | `nexttrace --dn42` |
+| 文件 | 规范 | 字段 |
+|---|---|---|
+| `geofeed.csv` | [RFC 8805](https://datatracker.ietf.org/doc/html/rfc8805) | `prefix, country_code, region, city, postal_code` |
+| `geofeed_nt.csv` | NextTrace 6 列 | `IP_CDIR, LtdCode, ISO3166-2, CityName, ASN, IPWhois` |
 
 ## 管线
 
