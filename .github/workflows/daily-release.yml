@@ -32,11 +32,17 @@ jobs:
         id: tag
         run: echo "TAG=release-$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
 
-      - name: Generate primary data
+      - name: Generate RFC 8805 primary
         run: python generate_primary.py
 
-      - name: Merge with manual overrides
+      - name: Merge RFC 8805 manual
         run: python merge_primary_manual.py
+
+      - name: Generate NextTrace primary
+        run: python generate_primary_nt.py
+
+      - name: Merge NextTrace manual
+        run: python merge_primary_manual_nt.py
 
       - name: Delete existing release (if any)
         run: |
@@ -50,5 +56,7 @@ jobs:
         with:
           name: ${{ steps.tag.outputs.TAG }}
           tag_name: ${{ steps.tag.outputs.TAG }}
-          files: geofeed.csv
+          files: |
+            geofeed.csv
+            geofeed_nt.csv
           fail_on_unmatched_files: true

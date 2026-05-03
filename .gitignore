@@ -1,3 +1,8 @@
 geofeed.csv
+geofeed_nt.csv
+geoip_primary.csv
+geoip_primary_nt.csv
 dn42_ssh1.key
-__pycache__/dn42_ssh1.key.pub
+dn42_ssh1.key.pub
+__pycache__/
+registry_repo/
