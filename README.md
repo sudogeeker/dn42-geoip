@@ -27,15 +27,15 @@
               │ geoip_primary.csv │    │ geoip_primary_nt.csv    │
               └───────┬──────────┘    └─────────┬──────────────┘
                       │                         │
-              ┌───────▼──────────┐    ┌─────────▼──────────────┐
-              │ geoip_manual.csv  │    │ geoip_manual_nt.csv     │
-              │   (人工修正)       │    │   (人工修正)            │
-              └───────┬──────────┘    └─────────┬──────────────┘
-                      │                         │
-              ┌───────▼──────────┐    ┌─────────▼──────────────┐
-              │ merge_primary     │    │ merge_primary_manual_nt │
-              │ _manual.py       │    │ .py                    │
-              └───────┬──────────┘    └─────────┬──────────────┘
+              ┌───────▼──────────────────────────────────┐
+              │         geoip_manual.csv (人工修正)       │
+              └───────┬──────────────────────────────────┘
+                      │
+              ┌───────▼──────────┐    ┌──────────────────────────┐
+              │ merge_primary     │    │ merge_primary_manual_nt   │
+              │ _manual.py       │    │ .py (ASN/IPWhois 从       │
+              │                  │    │      primary 最长前缀匹配) │
+              └───────┬──────────┘    └─────────┬────────────────┘
                       │                         │
               ┌───────▼──────────┐    ┌─────────▼──────────────┐
               │   geofeed.csv    │    │   geofeed_nt.csv        │
@@ -50,19 +50,14 @@
 
 ## 手工修正
 
-**RFC 8805** — 编辑 `geoip_manual.csv`：
+只需编辑 `geoip_manual.csv` 一个文件：
+
 ```
 prefix,country_code,region,city,postal_code
 172.22.159.0/27,CA,Ontario,Toronto
 ```
 
-**NextTrace** — 编辑 `geoip_manual_nt.csv`：
-```
-IP_CDIR,LtdCode,ISO3166-2,CityName,ASN,IPWhois
-172.22.159.0/27,CA,CA-ON,Toronto,AS4242420057,KELLERTK-MNT
-```
-
-相同前缀的条目会覆盖自动生成的数据。
+相同前缀覆盖自动数据。NextTrace 版本的 ASN 和 IPWhois 由程序从 primary 数据中最长前缀匹配自动补全，无需手动填写。
 
 ## CI / Release
 
