@@ -32,18 +32,6 @@ flowchart TD
     MANUAL --> MERGE2
 ```
 
-## 校验
-
-来自 registry 的原始数据可能包含格式错误。`validate.py` 在生成阶段拦截并丢弃不合法的条目：
-
-| 检验项 | 规则 | 示例（已发现） |
-|---|---|---|
-| CIDR | `ipaddress.ip_network(…, strict=True)` 通过 | `10.0.0.1/24` — 主机位非零 |
-| country | 恰好 2 位大写 ASCII 字母 | `USA`、`cn`、`Sumeru`、`DN42` |
-| ASN | 空值或 `AS\d+(;AS\d+)*` | 非法 ASN 被清空，不阻塞输出 |
-
-所有被丢弃的条目输出到 stderr，方便审计。
-
 ## 手工修正
 
 编辑 `geoip_manual.csv`，仅在需要覆盖 registry 数据时添加行：
